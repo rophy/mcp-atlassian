@@ -188,7 +188,7 @@ class TestToolsetTagCompleteness:
 
         loop = asyncio.new_event_loop()
         try:
-            return loop.run_until_complete(jira_mcp.get_tools())
+            return loop.run_until_complete(jira_mcp.list_tools())
         finally:
             loop.close()
 
@@ -201,49 +201,49 @@ class TestToolsetTagCompleteness:
 
         loop = asyncio.new_event_loop()
         try:
-            return loop.run_until_complete(confluence_mcp.get_tools())
+            return loop.run_until_complete(confluence_mcp.list_tools())
         finally:
             loop.close()
 
     def test_jira_tools_have_toolset_tag(self, jira_tools):
         """Every Jira tool must have exactly one toolset:* tag."""
-        for name, tool in jira_tools.items():
+        for tool in jira_tools:
             tags = tool.tags if hasattr(tool, "tags") else set()
             toolset_tags = [t for t in tags if t.startswith(TOOLSET_TAG_PREFIX)]
             assert len(toolset_tags) == 1, (
-                f"Jira tool '{name}' has {len(toolset_tags)} toolset tags "
+                f"Jira tool '{tool.name}' has {len(toolset_tags)} toolset tags "
                 f"(expected 1): {toolset_tags}"
             )
 
     def test_confluence_tools_have_toolset_tag(self, confluence_tools):
         """Every Confluence tool must have exactly one toolset:* tag."""
-        for name, tool in confluence_tools.items():
+        for tool in confluence_tools:
             tags = tool.tags if hasattr(tool, "tags") else set()
             toolset_tags = [t for t in tags if t.startswith(TOOLSET_TAG_PREFIX)]
             assert len(toolset_tags) == 1, (
-                f"Confluence tool '{name}' has {len(toolset_tags)} toolset "
+                f"Confluence tool '{tool.name}' has {len(toolset_tags)} toolset "
                 f"tags (expected 1): {toolset_tags}"
             )
 
     def test_jira_toolset_tags_are_valid(self, jira_tools):
         """Every Jira tool's toolset tag must reference a valid toolset."""
-        for name, tool in jira_tools.items():
+        for tool in jira_tools:
             tags = tool.tags if hasattr(tool, "tags") else set()
             toolset_name = get_toolset_tag(tags)
             if toolset_name is not None:
                 assert toolset_name in ALL_TOOLSETS, (
-                    f"Jira tool '{name}' has unknown toolset "
+                    f"Jira tool '{tool.name}' has unknown toolset "
                     f"'{toolset_name}' (not in ALL_TOOLSETS)"
                 )
 
     def test_confluence_toolset_tags_are_valid(self, confluence_tools):
         """Every Confluence tool's toolset tag must reference a valid toolset."""
-        for name, tool in confluence_tools.items():
+        for tool in confluence_tools:
             tags = tool.tags if hasattr(tool, "tags") else set()
             toolset_name = get_toolset_tag(tags)
             if toolset_name is not None:
                 assert toolset_name in ALL_TOOLSETS, (
-                    f"Confluence tool '{name}' has unknown toolset "
+                    f"Confluence tool '{tool.name}' has unknown toolset "
                     f"'{toolset_name}' (not in ALL_TOOLSETS)"
                 )
 
