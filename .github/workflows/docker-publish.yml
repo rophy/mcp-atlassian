@@ -72,6 +72,8 @@ jobs:
           # Use tags and labels from metadata action
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
           # Enable Docker layer caching
           cache-from: type=gha
           cache-to: type=gha,mode=max
