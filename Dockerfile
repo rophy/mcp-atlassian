@@ -28,7 +28,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Then, copy the rest of the project source code and install it
 COPY . /app
 RUN if [ -n "$VERSION" ]; then \
-      sed -i "s/fallback-version = \"0.0.0\"/fallback-version = \"$VERSION\"/" pyproject.toml; \
+      PEP440_VERSION=$(echo "$VERSION" | sed 's/-/./g'); \
+      sed -i "s/fallback-version = \"0.0.0\"/fallback-version = \"$PEP440_VERSION\"/" pyproject.toml; \
     fi
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
